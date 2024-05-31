@@ -1,5 +1,5 @@
 # Database.py
-from ..config_defs import MainConfig, DatabaseTag
+from ..database_config_defs import MainConfig, DatabaseTag
 from .DatabaseBaseClass import DatabaseBaseClass
 from .Postgres import Postgres
 

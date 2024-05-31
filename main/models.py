@@ -6,3 +6,10 @@ class TableAndDescription(BaseModel):
 
 class GenerateResponseRequest(BaseModel):
     request: str
+
+class TableDecisionOutput(BaseModel):
+    table_names: list[str]
+
+class QueryGenerationOutput(BaseModel):
+    result: str
+   

@@ -1,0 +1,17 @@
+<InstructionsStructure>
+    <Task>
+        Your primary goal is to identify the name of the relevant table contained within the user's request and produce output according to the specified schema. 
+        The names and descriptions of the tables in the database will be provided within the <TablesInfo> XML tag. The user's request will be provided within the 
+        <Request> tag. Only identify the relevant table names and generate the output according to the provided schema.
+    </Task>
+    <TablesInfo>
+        TablesAndDescriptions: {{tables_and_descriptions}}
+    </TablesInfo>
+    <Request>
+        Request: {{translated_request}}
+    </Request>
+    <Output>
+        <<OUTPUT (must include ```json at the start of the response)>>
+        <<OUTPUT (must end with ```)>>
+    </Output>
+</InstructionsStructure>

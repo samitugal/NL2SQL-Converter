@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 from .DatabaseBaseClass import DatabaseBaseClass
-from ..config_defs import MainConfig, DatabaseTag
+from ..database_config_defs import MainConfig, DatabaseTag
 from ..models import TableAndDescription
 from dotenv import load_dotenv
 import os
