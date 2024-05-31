@@ -1,0 +1,9 @@
+# postgresql.yaml
+db:
+  database_tag: POSTGRESQL
+postgresql:
+  database_name: northwind
+  user: myuser
+  password: mysecretpassword
+  host: localhost
+  port: 5432
