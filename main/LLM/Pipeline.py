@@ -1,6 +1,6 @@
 from ..llm_config_defs import LLMMainConfig
 from .BaseLLM import BaseLLM
-from ..models import TableAndDescription, QueryGenerationOutput, TableDecisionOutput
+from ..models import TableAndDescription, QueryGenerationOutput, TableDecisionOutput, TableNameAndColumns
 
 class Pipeline:
     def __init__(self, config: LLMMainConfig, llm: BaseLLM):
@@ -24,9 +24,9 @@ class Pipeline:
             table_names = table_decision_step.table_names
         )
     
-    def generate_sql_query_step(self, request: str, table_names: TableDecisionOutput, sql_type: str) -> QueryGenerationOutput:
+    def generate_sql_query_step(self, request: str, table_names: TableDecisionOutput, column_list: list[TableNameAndColumns], sql_type: str) -> QueryGenerationOutput:
         translated_request = self.llm.translate(request= request)
-        query_generation_step = self.llm.query_generation_step(request= translated_request, table_names= table_names, sql_type= sql_type)
+        query_generation_step = self.llm.query_generation_step(request= translated_request, table_names= table_names, column_list = column_list, sql_type= sql_type)
         return QueryGenerationOutput(
             result = query_generation_step.result
         )

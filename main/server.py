@@ -1,4 +1,7 @@
 # server.py
+import pandas as pd
+import numpy as np
+
 from fastapi import FastAPI, HTTPException, status
 from pydantic import BaseModel
 from pydantic_settings import BaseSettings
@@ -29,16 +32,41 @@ print(f"Using config from {envvars.LLM_CONFIG_PATH}")
 @app.post("/generate_response", status_code=status.HTTP_200_OK)
 def generate_response(request: GenerateResponseRequest):
     # try:
-    database = Database.new_instance_from_config(config= database_config)
-    table_names_and_descriptions = database.provide_table_names()
-    database.disconnect()
-    ##
-    llm = Pipeline.new_instance_from_config(config=llm_config)
-    table_names_result = llm.return_table_names_list(request= request, table_names_and_descriptions= table_names_and_descriptions)
-    ##
-    result= llm.generate_sql_query_step(request= request, table_names= table_names_result, sql_type= database_config.db.database_tag)
+        database = Database.new_instance_from_config(config=database_config)
+        table_names_and_descriptions = database.provide_table_names()
+        database.disconnect()
 
-    return result
+        llm = Pipeline.new_instance_from_config(config=llm_config)
+        table_names_result = llm.return_table_names_list(request=request, table_names_and_descriptions=table_names_and_descriptions)
+
+        table_names_and_columns = database.provide_column_names_of_tables(table_names=table_names_result.table_names)
+        query_result = llm.generate_sql_query_step(request=request, table_names=table_names_result, 
+                                                                    column_list= table_names_and_columns, sql_type=database_config.db.database_tag)
+        try:
+            result = database.execute_query(query=query_result.result)
+            columns = result.columns
+            rows = result.rows
+            data = [dict(zip(columns, row)) for row in rows]
+
+            # Creating DataFrame from the list of dictionaries
+            df = pd.DataFrame(data)
+
+            # Convertion Numpy to Json Convertible Version
+            json_compatible_data = df.replace({np.nan: None}).applymap(
+                lambda x: x.item() if isinstance(x, (np.integer, np.floating, np.bool_)) else x
+            ).to_dict(orient='records')
+
+            final_result = {
+                "database": database_config.db.database_tag,
+                "query": query_result.result,
+                "result": json_compatible_data
+            }
+
+            return final_result
+
+        finally:
+            database.disconnect()
+
     # except Exception as e:
     #     raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 

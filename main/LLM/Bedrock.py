@@ -6,7 +6,7 @@ from pydantic import BaseModel, ValidationError
 from dotenv import load_dotenv
 from anthropic import AnthropicBedrock
 
-from ..models import TableDecisionOutput, TableAndDescription, GenerateResponseRequest, QueryGenerationOutput
+from ..models import TableDecisionOutput, TableAndDescription, GenerateResponseRequest, QueryGenerationOutput, TableNameAndColumns
 from ..llm_config_defs import LLMMainConfig, LLMTag
 from .BaseLLM import BaseLLM
 from ..PromptRenderer import PromptRenderer
@@ -36,12 +36,21 @@ class Bedrock(BaseLLM):
             messages=[{"role": "user", "content": content}]
         )
         output = message.content[-1].text
+        print(content)
         return output
     
     def _clean_json_string(self, json_string):
         json_regex = re.compile(r'```json(.*?)```', re.DOTALL)
         json_match = json_regex.search(json_string)
-        return json_match.group(1).strip()
+        if json_match:
+            raw_json = json_match.group(1).strip()
+            cleaned_json = re.sub(r'[\x00-\x1F]+', '', raw_json)
+            if cleaned_json != raw_json:
+                return cleaned_json
+            else:
+                return raw_json
+        else:
+            raise ValueError("No JSON content found within triple backticks")
     
     def _parse_response(self, model: type[U], response: str) -> U:
         return model.model_validate_json(self._clean_json_string(response))
@@ -63,11 +72,12 @@ class Bedrock(BaseLLM):
         )
         return self._validated_anthropic_request(TableDecisionOutput, prompt)
     
-    def query_generation_step(self, request: str, table_names: TableDecisionOutput, sql_type: str) -> QueryGenerationOutput:
+    def query_generation_step(self, request: str, table_names: TableDecisionOutput, column_list: list[TableNameAndColumns], sql_type: str) -> QueryGenerationOutput:
         prompt = self.prompt_renderer.render_prompt_with_json_schema(
             "QueryGeneratorStep", QueryGenerationOutput, {
                 "translated_request": self.translate(request = request),
                 "table_names": table_names,
+                "table_names_and_column_information": column_list,
                 "sql_type": sql_type
             }
         )

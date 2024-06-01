@@ -3,6 +3,7 @@ from pydantic import BaseModel
 class TableAndDescription(BaseModel):
     table_name: str
     description: str | None = None
+    columns: str | None = None
 
 class GenerateResponseRequest(BaseModel):
     request: str
@@ -12,4 +13,11 @@ class TableDecisionOutput(BaseModel):
 
 class QueryGenerationOutput(BaseModel):
     result: str
-   
+
+class DatabaseQueryResponse(BaseModel):
+    rows: list
+    columns: list[str]
+
+class TableNameAndColumns(BaseModel):
+    TableName: str
+    Columns: list[str]

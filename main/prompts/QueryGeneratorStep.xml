@@ -6,6 +6,12 @@
         SQL query according to this information and the user's request. Finally, you will produce an output that 
         conforms to the schema I have provided.
     </Task>
+    <BusinessRules>
+        <Rule number=1>
+            Seperate between keyword while you generate the SQL query. Place between space between \n new line.
+            That query will be executed after generation. If you don't space between new line, you will get error.
+        </Rule>
+    </BusinessRules>
     <DatabaseType>
         DatabaseType: {{sql_type}}
         <Description>
@@ -18,6 +24,12 @@
             Table names information which you will used to generate the sql query.
         </Description>
     </TableNames>
+    <TableNamesAndColumnInformation>
+        TableNamesAndColumnInformation: {{table_names_and_column_information}}
+        <Description>
+            Table names and column information which you will used to generate the sql query.
+        </Description>
+    </TableNamesAndColumnInformation>
     <Request>
         Request: {{translated_request}}
     </Request>
