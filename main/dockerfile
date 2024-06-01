@@ -1,0 +1,23 @@
+FROM python:3.11
+
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y \
+    curl \
+    unzip
+
+RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && \
+    unzip awscliv2.zip && \
+    ./aws/install
+
+COPY . /app
+
+RUN pip install --upgrade pip
+RUN pip install -r requirements.txt
+
+ENV DATABASE_CONNECTION_PATH=/app/configs/DatabaseConfigs/postgresql.yaml
+ENV AWS_ACCESS_KEY_ID=your_access_key_id
+ENV AWS_SECRET_ACCESS_KEY=your_secret_access_key
+ENV AWS_DEFAULT_REGION=your_region
+
+CMD ["python", "-m", "main.server"]

@@ -1,0 +1,16 @@
+# Resmi PostgreSQL imajını kullan
+FROM postgres:latest
+
+# Gerekli araçları yükleyin
+RUN apt-get update && apt-get install -y wget unzip
+
+# Northwind veritabanı yedek dosyasını indir ve aç
+RUN wget -O /tmp/northwind.zip https://github.com/pthom/northwind_psql/archive/master.zip \
+    && unzip /tmp/northwind.zip -d /tmp/ \
+    && mv /tmp/northwind_psql-master/northwind.sql /docker-entrypoint-initdb.d/
+
+# Northwind veritabanı ve kullanıcı oluşturma komutlarını içeren bir dosya ekle
+COPY main/Databases/init-user-db.sh /docker-entrypoint-initdb.d/
+
+# Dosyaların izinlerini ayarla
+RUN chmod a+r /docker-entrypoint-initdb.d/*

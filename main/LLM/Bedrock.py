@@ -36,7 +36,6 @@ class Bedrock(BaseLLM):
             messages=[{"role": "user", "content": content}]
         )
         output = message.content[-1].text
-        print(content)
         return output
     
     def _clean_json_string(self, json_string):

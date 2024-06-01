@@ -82,7 +82,5 @@ class Postgres(DatabaseBaseClass):
         rows = result.fetchall()
         columns = list(result.keys())
         ##
-        print("RowsType: ", type(rows))
-        print("ColumnsType: ", type(columns))
-        ##
+
         return DatabaseQueryResponse(rows= rows, columns= columns)
