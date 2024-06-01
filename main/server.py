@@ -24,7 +24,7 @@ envvars = MainRuntimeVars()
 database_config: MainConfig = MainConfig.from_file(envvars.DATABASE_CONNECTION_PATH)
 print(f"Using config from {envvars.DATABASE_CONNECTION_PATH}")
 llm_config: LLMMainConfig = LLMMainConfig.from_file(envvars.LLM_CONFIG_PATH)
-print("Using config from {envvars.LLM_CONFIG_PATH}}")
+print(f"Using config from {envvars.LLM_CONFIG_PATH}")
 
 @app.post("/generate_response", status_code=status.HTTP_200_OK)
 def generate_response(request: GenerateResponseRequest):
@@ -34,7 +34,10 @@ def generate_response(request: GenerateResponseRequest):
     database.disconnect()
     ##
     llm = Pipeline.new_instance_from_config(config=llm_config)
-    result = llm.return_table_names_list(request= request, table_names_and_descriptions= table_names_and_descriptions)
+    table_names_result = llm.return_table_names_list(request= request, table_names_and_descriptions= table_names_and_descriptions)
+    ##
+    result= llm.generate_sql_query_step(request= request, table_names= table_names_result, sql_type= database_config.db.database_tag)
+
     return result
     # except Exception as e:
     #     raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))

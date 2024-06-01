@@ -6,7 +6,7 @@ from pydantic import BaseModel, ValidationError
 from dotenv import load_dotenv
 from anthropic import AnthropicBedrock
 
-from ..models import TableDecisionOutput, TableAndDescription, GenerateResponseRequest
+from ..models import TableDecisionOutput, TableAndDescription, GenerateResponseRequest, QueryGenerationOutput
 from ..llm_config_defs import LLMMainConfig, LLMTag
 from .BaseLLM import BaseLLM
 from ..PromptRenderer import PromptRenderer
@@ -36,7 +36,6 @@ class Bedrock(BaseLLM):
             messages=[{"role": "user", "content": content}]
         )
         output = message.content[-1].text
-        print(content)
         return output
     
     def _clean_json_string(self, json_string):
@@ -63,5 +62,15 @@ class Bedrock(BaseLLM):
             }
         )
         return self._validated_anthropic_request(TableDecisionOutput, prompt)
+    
+    def query_generation_step(self, request: str, table_names: TableDecisionOutput, sql_type: str) -> QueryGenerationOutput:
+        prompt = self.prompt_renderer.render_prompt_with_json_schema(
+            "QueryGeneratorStep", QueryGenerationOutput, {
+                "translated_request": self.translate(request = request),
+                "table_names": table_names,
+                "sql_type": sql_type
+            }
+        )
+        return self._validated_anthropic_request(QueryGenerationOutput, prompt)
 
     

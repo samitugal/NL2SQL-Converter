@@ -1,0 +1,28 @@
+<InstructionsStructure>
+    <Task>
+        Your primary goal is to create an SQL query based on the concepts provided in the user's request. 
+        The names of the tables you will use are listed within the <TableNames> XML tag. The type of database 
+        you will create the SQL query for is specified within the <DatabaseType> tag. You need to generate the 
+        SQL query according to this information and the user's request. Finally, you will produce an output that 
+        conforms to the schema I have provided.
+    </Task>
+    <DatabaseType>
+        DatabaseType: {{sql_type}}
+        <Description>
+            Database type information which you will used to generate the sql query.
+        </Description>
+    </DatabaseType>
+    <TableNames>
+        TableNames: {{table_names}}
+        <Description>
+            Table names information which you will used to generate the sql query.
+        </Description>
+    </TableNames>
+    <Request>
+        Request: {{translated_request}}
+    </Request>
+    <Output>
+        <<OUTPUT (must include ```json at the start of the response)>>
+        <<OUTPUT (must end with ```)>>
+    </Output>
+</InstructionsStructure>

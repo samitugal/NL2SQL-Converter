@@ -23,3 +23,10 @@ class Pipeline:
         return TableDecisionOutput(
             table_names = table_decision_step.table_names
         )
+    
+    def generate_sql_query_step(self, request: str, table_names: TableDecisionOutput, sql_type: str) -> QueryGenerationOutput:
+        translated_request = self.llm.translate(request= request)
+        query_generation_step = self.llm.query_generation_step(request= translated_request, table_names= table_names, sql_type= sql_type)
+        return QueryGenerationOutput(
+            result = query_generation_step.result
+        )

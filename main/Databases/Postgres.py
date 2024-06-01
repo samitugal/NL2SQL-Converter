@@ -26,7 +26,6 @@ class Postgres(DatabaseBaseClass):
         self.session.close()
 
     def provide_table_names(self) -> list[TableAndDescription]:
-        print(self.connection_string)
         metadata_query = """
         SELECT
             c.relname AS table_name,
@@ -43,3 +42,7 @@ class Postgres(DatabaseBaseClass):
         """
         result = self.session.execute(text(metadata_query)).fetchall()
         return [TableAndDescription(table_name=row[0], description=row[1]) for row in result]
+
+    def execute_query(self, query: str):
+        result = self.session.execute(text(query))
+        return result.fetchall()
