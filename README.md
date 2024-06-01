@@ -18,11 +18,11 @@ To run the project, follow these steps:
 
 1. Clone the repository:
     ```bash
-    git clone https://github.com/samitugal/aiworkspace.git
+    git clone https://github.com/samitugal/NL2SQL-Converter.git
     ```
 2. Navigate to the project directory::
     ```bash
-    cd aiworkspace
+    cd NL2SQL-Converter
     ```
 3. Start the application and build the necessary components using Docker Compose::
     ```bash
