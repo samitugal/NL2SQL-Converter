@@ -15,7 +15,7 @@ services:
     ports:
       - "5432:5432"
 
-  app:
+  fastapi-app:
     build:
       context: .
       dockerfile: main/dockerfile
@@ -29,6 +29,16 @@ services:
       LLM_CONFIG_PATH: "/app/configs/LLMConfigs/bedrock.yaml"
     ports:
       - "8000:8000"
+
+  streamlit-app:
+    build:
+      context: .
+      dockerfile: ui/dockerfile
+    container_name: my-streamlit-app
+    depends_on:
+      - fastapi-app
+    ports:
+      - "8051:8051"
 
 volumes:
   postgres-data:
