@@ -1,6 +1,7 @@
 # server.py
 import pandas as pd
 import numpy as np
+from dotenv import load_dotenv
 
 from fastapi import FastAPI, HTTPException, status
 from pydantic import BaseModel
@@ -17,15 +18,15 @@ from main.Databases.Postgres import Postgres
 class MainRuntimeVars(BaseSettings):
     DATABASE_CONNECTION_PATH: str
     LLM_CONFIG_PATH: str
-    AWS_ACCESS_KEY_ID: str
-    AWS_SECRET_ACCESS_KEY: str
-    AWS_DEFAULT_REGION: str
 
     class Config:
         env_file = ".env"
+        extra = "allow"
 
 app = FastAPI()
 envvars = MainRuntimeVars()
+
+load_dotenv()
 
 database_config: MainConfig = MainConfig.from_file(envvars.DATABASE_CONNECTION_PATH)
 print(f"Using config from {envvars.DATABASE_CONNECTION_PATH}")
