@@ -1,4 +1,4 @@
-from ..llm_config_defs import LLMMainConfig
+from ..llm_config_defs import LLMMainConfig, LLMTag
 from .BaseLLM import BaseLLM
 from ..models import TableAndDescription, QueryGenerationOutput, TableDecisionOutput, TableNameAndColumns
 
@@ -10,10 +10,13 @@ class Pipeline:
     @staticmethod
     def new_instance_from_config(config: LLMMainConfig) -> "Pipeline": 
         from .Bedrock import Bedrock
-        
+        from .OpenAI import OpenAI
+
         match config.llm.llm_tag:
-            case config.llm.llm_tag:
+            case LLMTag.BEDROCK:
                 return Pipeline(config, Bedrock(config))
+            case LLMTag.OPENAI:
+                return Pipeline(config, OpenAI(config))
             case _:
                 raise ValueError("Invalid LLM tag")
 

@@ -35,7 +35,7 @@ print(f"Using config from {envvars.LLM_CONFIG_PATH}")
 
 @app.post("/generate_response", status_code=status.HTTP_200_OK)
 def generate_response(request: GenerateResponseRequest):
-    # try:
+    try:
         database = Database.new_instance_from_config(config=database_config)
         table_names_and_descriptions = database.provide_table_names()
         database.disconnect()
@@ -56,7 +56,7 @@ def generate_response(request: GenerateResponseRequest):
             df = pd.DataFrame(data)
 
             # Convertion Numpy to Json Convertible Version
-            json_compatible_data = df.replace({np.nan: None}).applymap(
+            json_compatible_data = df.replace({np.nan: None}).map(
                 lambda x: x.item() if isinstance(x, (np.integer, np.floating, np.bool_)) else x
             ).to_dict(orient='records')
 
@@ -71,13 +71,8 @@ def generate_response(request: GenerateResponseRequest):
         finally:
             database.disconnect()
 
-    # except Exception as e:
-    #     raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
-
-@app.get("/hello")
-def hello():
-    print(config)
-    return {"Hello": "World"}
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
 if __name__ == "__main__":
     import uvicorn

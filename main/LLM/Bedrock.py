@@ -39,17 +39,21 @@ class Bedrock(BaseLLM):
         return output
     
     def _clean_json_string(self, json_string):
-        json_regex = re.compile(r'```json(.*?)```', re.DOTALL)
-        json_match = json_regex.search(json_string)
-        if json_match:
-            raw_json = json_match.group(1).strip()
-            cleaned_json = re.sub(r'[\x00-\x1F]+', '', raw_json)
-            if cleaned_json != raw_json:
-                return cleaned_json
+        try:
+            json.loads(json_string)
+            return json_string
+        except json.JSONDecodeError:
+            json_regex = re.compile(r'```json(.*?)```', re.DOTALL)
+            json_match = json_regex.search(json_string)
+            if json_match:
+                raw_json = json_match.group(1).strip()
+                cleaned_json = re.sub(r'[\x00-\x1F]+', '', raw_json)
+                if cleaned_json != raw_json:
+                    return cleaned_json
+                else:
+                    return raw_json
             else:
-                return raw_json
-        else:
-            raise ValueError("No JSON content found within triple backticks")
+                raise ValueError("No JSON content found within triple backticks")
     
     def _parse_response(self, model: type[U], response: str) -> U:
         return model.model_validate_json(self._clean_json_string(response))

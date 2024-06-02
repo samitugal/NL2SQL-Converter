@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 class TableAndDescription(BaseModel):
     table_name: str
@@ -21,3 +21,6 @@ class DatabaseQueryResponse(BaseModel):
 class TableNameAndColumns(BaseModel):
     TableName: str
     Columns: list[str]
+
+class TranslateModelOutput(BaseModel):
+    TranslatedText: str = Field(description="The translated text in English")

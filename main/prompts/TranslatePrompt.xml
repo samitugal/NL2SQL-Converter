@@ -1,0 +1,12 @@
+<InstructionStructure>
+    <PrimaryTask>
+        Translate the following text to English I will provide you in <Request> tag. 
+    </PrimaryTask>
+    <Request>
+        Request: {{request}}
+    </Request>
+    <Output>
+        <<OUTPUT (must include ```json at the start of the response)>>
+        <<OUTPUT (must end with ```)>>
+    </Output>
+</InstructionStructure>

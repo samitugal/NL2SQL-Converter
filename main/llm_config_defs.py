@@ -20,9 +20,16 @@ class BedrockConfig:
     model_id: str = "claude-3-sonnet-20240229-v1:0"
 
 @dataclass
+class OpenAIConfig:
+    llm_tag: LLMTag = LLMTag.OPENAI
+    model_name: str = "gpt-4-1106-preview"
+    json_mode: bool = True
+
+@dataclass
 class LLMMainConfig:
     llm: LLMConfig = field(default_factory=LLMConfig)
     bedrock: Optional[BedrockConfig] = None
+    openai: Optional[OpenAIConfig] = None
 
     @staticmethod
     def from_file(yaml_path: str) -> "MainConfig":

@@ -5,5 +5,5 @@ postgresql:
   database_name: northwind
   user: myuser
   password: mysecretpassword
-  host: my-postgres-container # localhost
+  host: localhost #my-postgres-container
   port: 5432
