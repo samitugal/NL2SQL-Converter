@@ -42,7 +42,7 @@ class Bedrock(BaseLLM):
         try:
             json.loads(json_string)
             return json_string
-        except json.JSONDecodeError:
+        except Exception as e:
             json_regex = re.compile(r'```json(.*?)```', re.DOTALL)
             json_match = json_regex.search(json_string)
             if json_match:
