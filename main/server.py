@@ -38,14 +38,18 @@ def generate_response(request: GenerateResponseRequest):
     try:
         database = Database.new_instance_from_config(config=database_config)
         table_names_and_descriptions = database.provide_table_names()
+        table_relations = database.provide_table_relations()
         database.disconnect()
 
         llm = Pipeline.new_instance_from_config(config=llm_config)
-        table_names_result = llm.return_table_names_list(request=request, table_names_and_descriptions=table_names_and_descriptions)
+        table_names_result = llm.return_table_names_list(request=request, 
+                                                        table_names_and_descriptions=table_names_and_descriptions,
+                                                        table_relations= table_relations)
 
         table_names_and_columns = database.provide_column_names_of_tables(table_names=table_names_result.table_names)
-        query_result = llm.generate_sql_query_step(request=request, table_names=table_names_result, 
-                                                                    column_list= table_names_and_columns, sql_type=database_config.db.database_tag)
+        query_result = llm.generate_sql_query_step(request=request, 
+                                                    table_names=table_names_result, 
+                                                    column_list= table_names_and_columns, sql_type=database_config.db.database_tag)
         try:
             result = database.execute_query(query=query_result.result)
             columns = result.columns

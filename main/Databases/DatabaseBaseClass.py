@@ -1,5 +1,5 @@
 from typing import Protocol
-from ..models import TableAndDescription, TableNameAndColumns
+from ..models import TableAndDescription, TableNameAndColumns, TableRelationModel
 
 class DatabaseBaseClass(Protocol):
 
@@ -13,4 +13,7 @@ class DatabaseBaseClass(Protocol):
         ...
 
     def first_step():
+        ...
+    
+    def provide_table_relations() -> list[TableRelationModel]:
         ...

@@ -2,7 +2,7 @@
 from ..database_config_defs import MainConfig, DatabaseTag
 from .DatabaseBaseClass import DatabaseBaseClass
 from .Postgres import Postgres
-from ..models import DatabaseQueryResponse, TableNameAndColumns
+from ..models import DatabaseQueryResponse, TableNameAndColumns, TableAndDescription, TableRelationModel
 
 class Database:
     def __init__(self, config: MainConfig, database: DatabaseBaseClass):
@@ -21,6 +21,12 @@ class Database:
 
     def provide_column_names_of_table(self, table_name: str) -> list[TableNameAndColumns]:
         return self.database.provide_column_names_of_table(table_name)
+
+    def provide_table_names(self) -> list[TableAndDescription]:
+        return self.database.provide_table_names() 
+
+    def provide_table_relations(self) -> list[TableRelationModel]:
+        return self.database.provide_table_relations()
 
     def close(self):
         self.database.close()

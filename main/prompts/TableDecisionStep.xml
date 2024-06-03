@@ -7,6 +7,12 @@
     <TablesInfo>
         TablesAndDescriptions: {{tables_and_descriptions}}
     </TablesInfo>
+    <TablesAndRelationsInfo>
+        TablesAndRelations: {{tables_and_relations}}
+        <descriptions>
+            Primary key and foreign key information for each table.
+        </descriptions>
+    </TablesAndRelationsInfo>
     <Request>
         Request: {{translated_request}}
     </Request>

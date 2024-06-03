@@ -10,7 +10,7 @@ from langchain_openai import ChatOpenAI
 from pydantic import BaseModel, ValidationError
 from typing import TypeVar
 
-from ..models import TableDecisionOutput, TableAndDescription, GenerateResponseRequest, QueryGenerationOutput, TableNameAndColumns, TranslateModelOutput
+from ..models import TableDecisionOutput, TableAndDescription, GenerateResponseRequest, QueryGenerationOutput, TableNameAndColumns, TranslateModelOutput, TableRelationModel
 from ..llm_config_defs import LLMMainConfig, LLMTag
 from .BaseLLM import BaseLLM
 from ..PromptRenderer import PromptRenderer
@@ -39,7 +39,6 @@ class OpenAI(BaseLLM):
             ("human", content),
         ]
         output = self.client.invoke(messages)
-        print(output.content)
         return output.content
     
     def _clean_json_string(self, json_string):
@@ -74,11 +73,12 @@ class OpenAI(BaseLLM):
         )
         return self._validated_openai_request(TranslateModelOutput, translate_model_prompt)
 
-    def table_decision_step(self, request: str, table_names_and_descriptions: list[TableAndDescription]) -> TableDecisionOutput:
+    def table_decision_step(self, request: str, table_names_and_descriptions: list[TableAndDescription], table_relations: list[TableRelationModel]) -> TableDecisionOutput:
         table_decision_prompt = self.prompt_renderer.render_prompt_with_json_schema(
             "TableDecisionStep", TableDecisionOutput, {
                 "translated_request": request,
-                "tables_and_descriptions": table_names_and_descriptions
+                "tables_and_descriptions": table_names_and_descriptions,
+                "tables_and_relations": table_relations
             }
         )     
         return self._validated_openai_request(TableDecisionOutput, table_decision_prompt)

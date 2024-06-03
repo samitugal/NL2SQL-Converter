@@ -1,6 +1,6 @@
 from ..llm_config_defs import LLMMainConfig, LLMTag
 from .BaseLLM import BaseLLM
-from ..models import TableAndDescription, QueryGenerationOutput, TableDecisionOutput, TableNameAndColumns
+from ..models import TableAndDescription, QueryGenerationOutput, TableDecisionOutput, TableNameAndColumns, TableRelationModel
 
 class Pipeline:
     def __init__(self, config: LLMMainConfig, llm: BaseLLM):
@@ -20,9 +20,11 @@ class Pipeline:
             case _:
                 raise ValueError("Invalid LLM tag")
 
-    def return_table_names_list(self, request:str, table_names_and_descriptions: list[TableAndDescription]) -> TableDecisionOutput:
+    def return_table_names_list(self, request:str, table_names_and_descriptions: list[TableAndDescription], table_relations: list[TableRelationModel]) -> TableDecisionOutput:
         translated_request = self.llm.translate(request= request)
-        table_decision_step = self.llm.table_decision_step(request= translated_request, table_names_and_descriptions= table_names_and_descriptions)
+        table_decision_step = self.llm.table_decision_step(request= translated_request, 
+                                                            table_names_and_descriptions= table_names_and_descriptions,
+                                                            table_relations= table_relations)
         return TableDecisionOutput(
             table_names = table_decision_step.table_names
         )

@@ -3,7 +3,7 @@ from sqlalchemy.orm import sessionmaker
 from typing import List
 from .DatabaseBaseClass import DatabaseBaseClass
 from ..database_config_defs import MainConfig, DatabaseTag
-from ..models import TableAndDescription, DatabaseQueryResponse, TableNameAndColumns
+from ..models import TableAndDescription, DatabaseQueryResponse, TableNameAndColumns, TableRelationModel
 from dotenv import load_dotenv
 import os
 
@@ -76,6 +76,39 @@ class Postgres(DatabaseBaseClass):
             table_columns_info.append(TableNameAndColumns(TableName=table_name, Columns=column_names))
         
         return table_columns_info
+        
+    def provide_table_relations(self) -> list[TableRelationModel]:
+        metadata_query = """
+        SELECT
+            kcu.table_name AS child_table,
+            kcu.column_name AS child_column,
+            ccu.table_name AS parent_table,
+            ccu.column_name AS parent_column
+        FROM
+            information_schema.table_constraints AS tc
+            JOIN information_schema.key_column_usage AS kcu
+            ON tc.constraint_name = kcu.constraint_name
+            AND tc.table_schema = kcu.table_schema
+            JOIN information_schema.constraint_column_usage AS ccu
+            ON ccu.constraint_name = tc.constraint_name
+            AND ccu.table_schema = tc.table_schema
+        WHERE tc.constraint_type = 'FOREIGN KEY'
+        ORDER BY
+            kcu.table_name, kcu.column_name;
+        """
+        result = self.session.execute(text(metadata_query)).fetchall()
+        
+        table_relations = []
+        for row in result:
+            relation = TableRelationModel(
+                ParentTableName=row[2],  # parent_table
+                ParentTableColumnName=row[3],  # parent_column
+                ChildTableName=row[0],  # child_table
+                ChildTableColumnName=row[1]  # child_column
+            )
+            table_relations.append(relation)
+        
+        return table_relations
 
     def execute_query(self, query: str) -> DatabaseQueryResponse:
         result = self.session.execute(text(query))

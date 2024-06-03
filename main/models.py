@@ -24,3 +24,10 @@ class TableNameAndColumns(BaseModel):
 
 class TranslateModelOutput(BaseModel):
     TranslatedText: str = Field(description="The translated text in English")
+
+class TableRelationModel(BaseModel):
+    ParentTableName: str
+    ParentTableColumnName: str
+    ChildTableName: str
+    ChildTableColumnName: str
+    
