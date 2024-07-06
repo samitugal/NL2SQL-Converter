@@ -33,9 +33,6 @@ In the configs/DatabaseConfigs directory, you can choose from various database t
 
 - DATABASE_CONNECTION_PATH
 - LLM_CONFIG_PATH
-- AWS_ACCESS_KEY_ID
-- AWS_SECRET_ACCESS_KEY
-- AWS_DEFAULT_REGION
 
 ## Usage
 The application runs on port 8000. To send a request, make a POST request to the /generate_response API endpoint. The request should include a parameter called request where users can write their desired query.
